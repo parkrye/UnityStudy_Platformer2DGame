@@ -1,0 +1,28 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class DataManager : MonoBehaviour
+{
+    [SerializeField] int life;
+    public int Life { get { return life; } set {  life = value; } }
+
+    void Awake()
+    {
+        Reset();
+    }
+
+    public void OnHPEvent(int modifier)
+    {
+        Life += modifier;
+        if(Life <= 0)
+        {
+            GameManager.Instance.GameOver();
+        }
+    }
+
+    public void Reset()
+    {
+        Life = 3;
+    }
+}

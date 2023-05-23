@@ -7,6 +7,6 @@ public class PlayerViewer : MonoBehaviour
 
     public void OnHPModified(int life)
     {
-        lifeText.text = "" + life;
+        lifeText.text = life.ToString();
     }
 }

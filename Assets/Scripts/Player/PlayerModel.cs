@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,13 +7,10 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] int life;
     [SerializeField] UnityEvent<int> HPModifiedEvent;
 
-    void Awake()
-    {
-        life = 3;
-    }
 
-    private void Start()
+    void Start()
     {
+        life = GameManager.Instance.Data.Life;
         HPModifiedEvent?.Invoke(life);
     }
 

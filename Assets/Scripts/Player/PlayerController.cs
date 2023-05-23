@@ -7,18 +7,29 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] Rigidbody2D rigid;
     [SerializeField] Animator animator;
+    [SerializeField] CircleCollider2D coll;
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] GameObject bottom;
     [SerializeField] Vector2 moveDir;
     [SerializeField] float moveSpeed, jumpPower;
-    [SerializeField] bool jump, damaged;
+    [SerializeField] bool jump, controlable;
     [SerializeField] UnityEvent<int> HPEvent;
+
+    public Vector2 MoveDir { get { return moveDir; } }
+    public bool Controlable { get { return controlable; } }
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        coll = GetComponent<CircleCollider2D>();
+    }
+
+    void Start()
+    {
+        HPEvent.AddListener(GameManager.Instance.Data.OnHPEvent);
+        controlable = true;
     }
 
     void Update()
@@ -34,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        if(!damaged)
+        if(controlable)
         {
             if (animator.GetBool("OnRiddle"))
             {
@@ -51,15 +62,14 @@ public class PlayerController : MonoBehaviour
     {
         if (jump)
         {
-            if (!damaged)
+            if (controlable)
             {
                 if (animator.GetBool("IsGround"))
                 {
                     if (animator.GetBool("OnRiddle"))
                     {
-                        rigid.gravityScale = 1f;
-                        animator.SetBool("OnRiddle", false);
-                        rigid.AddForce(transform.up * jumpPower * 0.5f + transform.right * moveDir.x * moveSpeed, ForceMode2D.Impulse);
+                        RiddleOut();
+                        rigid.AddForce(transform.right * moveDir.x * moveSpeed, ForceMode2D.Impulse);
                     }
                     else
                     {
@@ -84,7 +94,8 @@ public class PlayerController : MonoBehaviour
     void CheckGround()
     {
         RaycastHit2D hit;
-        if(hit = Physics2D.Raycast(transform.position, -transform.up * 1.2f, 1.3f, LayerMask.GetMask("Ground")))
+        Debug.DrawRay(transform.position - transform.up * 1.5f, -transform.up * 0.1f, Color.red);
+        if(hit = Physics2D.Raycast(transform.position - transform.up * 1.5f, -transform.up, 0.1f, LayerMask.GetMask("Ground")))
         {
             animator.SetBool("IsGround", true);
             bottom = hit.transform.gameObject;
@@ -135,37 +146,58 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "Riddle" && !animator.GetBool("OnRiddle") && moveDir.y != 0)
-        {
-            rigid.gravityScale = 0f;
-            animator.SetTrigger("RideRiddle");
-            animator.SetBool("OnRiddle", true);
-        }
+        if (collision.tag == "Riddle" && moveDir.y != 0)
+            RiddleIn();
     }
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "Riddle")
-        {
-            rigid.gravityScale = 1f;
-            animator.SetBool("OnRiddle", false);
-        }
+        if (collision.tag == "Riddle" && animator.GetBool("OnRiddle"))
+            RiddleOut();
     }
 
-    public void DamageMove()
+    public void RiddleIn()
     {
-        if (!damaged)
+        coll.enabled = false;
+        rigid.gravityScale = 0f;
+        animator.SetTrigger("RideRiddle");
+        animator.SetBool("OnRiddle", true);
+    }
+
+    public void RiddleOut()
+    {
+        coll.enabled = true;
+        rigid.gravityScale = 1f;
+        animator.SetBool("OnRiddle", false);
+    }
+
+    public void ClearMove()
+    {
+        controlable = true;
+        animator.SetTrigger("Clear");
+    }
+
+    public void TrapMove(Vector2 dir, int damage)
+    {
+        if (controlable)
         {
-            HPEvent?.Invoke(-1);
-            rigid.AddForce((transform.up * 2f - transform.right) * 10f, ForceMode2D.Impulse);
-            StartCoroutine(DamageCoolTime());
+            if(damage > 0)
+            {
+                HPEvent?.Invoke(-damage);
+                rigid.velocity = Vector2.zero;
+                StartCoroutine(DamageCoolTime());
+            }
+            rigid.AddForce(dir * 10f, ForceMode2D.Impulse);
         }
     }
 
     IEnumerator DamageCoolTime()
     {
-        damaged = true;
+        controlable = false;
+        sprite.flipX = false;
+        animator.SetTrigger("Hit");
         yield return new WaitForSeconds(1f);
-        damaged = false;
+        controlable = true;
+        animator.SetTrigger("Recovery");
     }
 }
