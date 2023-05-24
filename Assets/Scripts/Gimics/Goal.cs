@@ -29,6 +29,7 @@ public class Goal : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
         GameManager.Instance.Data.Life++;
+        GameManager.Instance.Data.Bullet++;
         if (stage + 1 < SceneManager.sceneCountInBuildSettings)
             SceneManager.LoadScene(stage + 1);
         else

@@ -9,11 +9,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] CircleCollider2D coll;
     [SerializeField] SpriteRenderer sprite;
-    [SerializeField] GameObject bottom;
+    [SerializeField] GameObject bottom, bulletPrefab;
 
     [SerializeField] Vector2 moveDir;
     [SerializeField] float moveSpeed, highSpeed, jumpPower;
     [SerializeField] bool jump, controlable;
+    [SerializeField] int shotCount;
 
     [SerializeField] UnityEvent<int> HPEvent;
     [SerializeField] UnityEvent RiddleEvent;
@@ -31,7 +32,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        HPEvent.AddListener(GameManager.Instance.Data.OnHPEvent);
         controlable = true;
     }
 
@@ -73,27 +73,24 @@ public class PlayerController : MonoBehaviour
         {
             if (controlable)
             {
-                if (animator.GetBool("IsGround"))
+                if (animator.GetBool("OnRiddle"))
                 {
-                    if (animator.GetBool("OnRiddle"))
+                    RiddleOut();
+                    rigid.velocity = Vector2.zero;
+                    rigid.AddForce((transform.up + transform.right * moveDir.x) * jumpPower * 0.5f, ForceMode2D.Impulse);
+                }
+                else if (animator.GetBool("IsGround"))
+                {
+                    if (animator.GetBool("IsSit"))
                     {
-                        RiddleOut();
-                        rigid.velocity = Vector2.zero;
-                        rigid.AddForce(transform.right * moveDir.x * 2f, ForceMode2D.Impulse);
+                        if (bottom.GetComponent<DownablePlatform>())
+                        {
+                            bottom.GetComponent<DownablePlatform>().DownJump();
+                        }
                     }
                     else
                     {
-                        if (animator.GetBool("IsSit"))
-                        {
-                            if (bottom.GetComponent<DownablePlatform>())
-                            {
-                                bottom.GetComponent<DownablePlatform>().DownJump();
-                            }
-                        }
-                        else
-                        {
-                            rigid.AddForce(transform.up * jumpPower, ForceMode2D.Impulse);
-                        }
+                        rigid.AddForce(transform.up * jumpPower, ForceMode2D.Impulse);
                     }
                 }
             }
@@ -152,6 +149,16 @@ public class PlayerController : MonoBehaviour
             jump = true;
             animator.SetTrigger("DoJump");
         }
+    }
+
+    public void ShotBullet()
+    {
+        if(shotCount > 0)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, transform.position - transform.up * 0.5f + transform.right * (sprite.flipX == true ? -1 : 1), Quaternion.identity);
+            bullet.GetComponent<Bullet>().SetDirection((sprite.flipX == true ? Vector2.left : Vector2.right));
+        }
+        shotCount++;
     }
 
     public void RiddleIn(UnityAction riddle)

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -5114529644755241087}
   m_Layer: 0
   m_Name: GreenWorm
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,6 +152,7 @@ MonoBehaviour:
   power: 8
   rb: {fileID: 0}
   sprite: {fileID: 0}
+  anim: {fileID: 0}
   dir: 0
 --- !u!95 &-5114529644755241087
 Animator:

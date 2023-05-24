@@ -5,12 +5,14 @@ public abstract class EnemyBase : MonoBehaviour
     [SerializeField] protected float speed, highSpeed, power;
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected SpriteRenderer sprite;
+    [SerializeField] protected Animator anim;
     [SerializeField] protected int dir;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
         dir = -1;
     }
 
@@ -60,5 +62,13 @@ public abstract class EnemyBase : MonoBehaviour
 
         dir = -dir;
         sprite.flipX = !sprite.flipX;
+    }
+
+    public virtual void Die()
+    {
+        anim.SetTrigger("Die");
+        rb.gravityScale = 1f;
+        gameObject.layer = LayerMask.GetMask("Ground");
+        Destroy(this);
     }
 }

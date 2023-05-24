@@ -175,6 +175,7 @@ MonoBehaviour:
   power: 8
   rb: {fileID: 1555012627911886177}
   sprite: {fileID: 4531298554203276548}
+  anim: {fileID: 4531298554203276549}
   dir: -1
   initialPosition: {x: 0, y: 0}
   enemyState: 0

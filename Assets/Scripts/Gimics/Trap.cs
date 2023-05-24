@@ -29,6 +29,7 @@ public class Trap : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            GetComponent<Animator>().SetTrigger("Use");
             collision.gameObject.GetComponent<PlayerController>().TrapMove(transform.up * power, 0);
         }
     }
