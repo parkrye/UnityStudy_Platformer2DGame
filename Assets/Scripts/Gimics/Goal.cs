@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GoalController : MonoBehaviour
+public class Goal : MonoBehaviour
 {
     [SerializeField] Animator anim;
     [SerializeField] int stage;
@@ -28,6 +28,7 @@ public class GoalController : MonoBehaviour
     IEnumerator StageClear()
     {
         yield return new WaitForSeconds(3f);
+        GameManager.Instance.Data.Life++;
         if (stage + 1 < SceneManager.sceneCountInBuildSettings)
             SceneManager.LoadScene(stage + 1);
         else

@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class EnemyBase : MonoBehaviour
 {
-    [SerializeField][Range(0f, 4f)] protected float speed;
+    [SerializeField] protected float speed, highSpeed, power;
     [SerializeField] protected Rigidbody2D rb;
     [SerializeField] protected SpriteRenderer sprite;
     [SerializeField] protected int dir;
@@ -16,20 +14,41 @@ public abstract class EnemyBase : MonoBehaviour
         dir = -1;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag is "Player")
         {
-            collision.gameObject.GetComponent<PlayerController>().TrapMove((collision.transform.position - transform.position).normalized, 1);
+            collision.gameObject.GetComponent<PlayerController>().TrapMove((collision.transform.position - transform.position).normalized * power, 1);
+            rb.AddForce((transform.position - collision.transform.position).normalized * power, ForceMode2D.Impulse);
         }
     }
 
-    protected void Move()
+    void OnTriggerStay2D(Collider2D collision)
     {
-        rb.velocity = (transform.right * dir * speed);
+        if (collision.tag is "Player" && Vector2.Distance(transform.position, collision.transform.position) < 1f)
+        {
+            collision.GetComponent<PlayerController>().TrapMove((collision.transform.position - transform.position).normalized * power, 1);
+            rb.AddForce((transform.position - collision.transform.position).normalized * power, ForceMode2D.Impulse);
+        }
     }
 
-    protected void Turn()
+    protected virtual void Update()
+    {
+        CheckMove();
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        Move();
+    }
+
+    protected virtual void Move()
+    {
+        if(rb.velocity.x * dir < highSpeed)
+            rb.AddForce(transform.right * dir * speed, ForceMode2D.Force);
+    }
+
+    protected virtual void CheckMove()
     {
         Debug.DrawRay(transform.position + transform.right * dir, -transform.up, Color.red);
         Debug.DrawRay(transform.position, transform.right * dir, Color.red);

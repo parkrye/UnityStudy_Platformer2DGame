@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2023651337938094022}
   - component: {fileID: 2023651337938094025}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CM vcam1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 2023651337987125025}
   - component: {fileID: 2023651337987125055}
   - component: {fileID: 2023651337987125054}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: HPSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,7 +158,7 @@ GameObject:
   - component: {fileID: 2023651338384837824}
   - component: {fileID: 2023651338384837854}
   - component: {fileID: 2023651338384837825}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: HPText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 2023651338502768977}
   - component: {fileID: 2023651338502768979}
   - component: {fileID: 2023651338502769071}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023651338502768978}
-  m_LocalRotation: {x: -0.2116997, y: 0.000000018001383, z: 0.000000003899265, w: 0.9773348}
+  m_LocalRotation: {x: -0.21169968, y: 0.000000014563424, z: 0.0000000031545713, w: 0.9773348}
   m_LocalPosition: {x: 0, y: -5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 2023651339412135961}
   - component: {fileID: 2023651339412135956}
   - component: {fileID: 2023651339412135958}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -462,9 +462,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BindingMode: 1
   m_FollowOffset: {x: 0, y: -5, z: -10}
-  m_XDamping: 0
-  m_YDamping: 0
-  m_ZDamping: 0
+  m_XDamping: 1
+  m_YDamping: 1
+  m_ZDamping: 1
   m_AngularDampingMode: 0
   m_PitchDamping: 0
   m_YawDamping: 0
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 2023651339512141822}
   - component: {fileID: 2023651339512141793}
   - component: {fileID: 2023651339512141792}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: UICanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 1541391350816758185}
   - component: {fileID: 2023651339564752841}
   - component: {fileID: 6230284570897049818}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -737,8 +737,9 @@ MonoBehaviour:
   sprite: {fileID: 2023651339564752844}
   bottom: {fileID: 0}
   moveDir: {x: 0, y: 0}
-  moveSpeed: 5
-  jumpPower: 8
+  moveSpeed: 12
+  highSpeed: 8
+  jumpPower: 10
   jump: 0
   controlable: 0
   HPEvent:
@@ -756,6 +757,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  RiddleEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2023651339564752839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,7 +865,7 @@ GameObject:
   - component: {fileID: 7571979539509437272}
   - component: {fileID: 4796263856086754773}
   - component: {fileID: 9103470605092080761}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -954,7 +958,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4629451380116173639}
   - component: {fileID: 2465317209063279588}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CM vcam2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -968,7 +972,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5534573024247147726}
-  m_LocalRotation: {x: -0.21169968, y: -0.00000001029494, z: -0.0000000022299784, w: 0.9773348}
+  m_LocalRotation: {x: -0.21169968, y: 0.00000001029494, z: 0.0000000022299784, w: 0.9773348}
   m_LocalPosition: {x: 0, y: -5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

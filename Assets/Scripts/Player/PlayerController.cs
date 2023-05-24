@@ -10,10 +10,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] CircleCollider2D coll;
     [SerializeField] SpriteRenderer sprite;
     [SerializeField] GameObject bottom;
+
     [SerializeField] Vector2 moveDir;
-    [SerializeField] float moveSpeed, jumpPower;
+    [SerializeField] float moveSpeed, highSpeed, jumpPower;
     [SerializeField] bool jump, controlable;
+
     [SerializeField] UnityEvent<int> HPEvent;
+    [SerializeField] UnityEvent RiddleEvent;
 
     public Vector2 MoveDir { get { return moveDir; } }
     public bool Controlable { get { return controlable; } }
@@ -49,11 +52,17 @@ public class PlayerController : MonoBehaviour
         {
             if (animator.GetBool("OnRiddle"))
             {
-                rigid.velocity = transform.up * moveSpeed * moveDir.y;
+                rigid.velocity = (transform.right * MoveDir.x + transform.up * moveDir.y * 2f);
             }
             else
             {
-                rigid.velocity = new Vector2(moveSpeed * moveDir.x, rigid.velocity.y);
+                if(rigid.velocity.x * moveDir.x < highSpeed)
+                {
+                    if (animator.GetBool("IsGround"))
+                        rigid.AddForce(transform.right * moveDir.x * moveSpeed, ForceMode2D.Force);
+                    else
+                        rigid.AddForce(transform.right * moveDir.x * moveSpeed * 0.5f, ForceMode2D.Force);
+                }
             }
         }
     }
@@ -69,7 +78,8 @@ public class PlayerController : MonoBehaviour
                     if (animator.GetBool("OnRiddle"))
                     {
                         RiddleOut();
-                        rigid.AddForce(transform.right * moveDir.x * moveSpeed, ForceMode2D.Impulse);
+                        rigid.velocity = Vector2.zero;
+                        rigid.AddForce(transform.right * moveDir.x * 2f, ForceMode2D.Impulse);
                     }
                     else
                     {
@@ -144,50 +154,48 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnTriggerStay2D(Collider2D collision)
+    public void RiddleIn(UnityAction riddle)
     {
-        if (collision.tag == "Riddle" && moveDir.y != 0)
-            RiddleIn();
-    }
-
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == "Riddle" && animator.GetBool("OnRiddle"))
-            RiddleOut();
-    }
-
-    public void RiddleIn()
-    {
-        coll.enabled = false;
-        rigid.gravityScale = 0f;
-        animator.SetTrigger("RideRiddle");
-        animator.SetBool("OnRiddle", true);
+        if (!animator.GetBool("OnRiddle"))
+        {
+            RiddleEvent.AddListener(riddle);
+            coll.isTrigger = true;
+            rigid.gravityScale = 0f;
+            animator.SetTrigger("RideRiddle");
+            animator.SetBool("OnRiddle", true);
+        }
     }
 
     public void RiddleOut()
     {
-        coll.enabled = true;
-        rigid.gravityScale = 1f;
-        animator.SetBool("OnRiddle", false);
+        if (animator.GetBool("OnRiddle"))
+        {
+            RiddleEvent?.Invoke();
+            RiddleEvent.RemoveAllListeners();
+            coll.isTrigger = false;
+            rigid.gravityScale = 1f;
+            animator.SetBool("OnRiddle", false);
+        }
     }
 
     public void ClearMove()
     {
-        controlable = true;
+        controlable = false;
         animator.SetTrigger("Clear");
+        GetComponent<PlayerInput>().enabled = false;
     }
 
     public void TrapMove(Vector2 dir, int damage)
     {
         if (controlable)
         {
-            if(damage > 0)
+            if (damage > 0)
             {
                 HPEvent?.Invoke(-damage);
                 rigid.velocity = Vector2.zero;
                 StartCoroutine(DamageCoolTime());
             }
-            rigid.AddForce(dir * 10f, ForceMode2D.Impulse);
+            rigid.AddForce(dir, ForceMode2D.Impulse);
         }
     }
 
